@@ -1,22 +1,21 @@
 import { LogOut } from "lucide-react";
 import Conversations from "../Shared/Conversations";
 import SearchBox from "../Shared/SearchBox";
-import { useSignOutMutation } from "@/lib/queries/auth.query";
 import { useAuthContext } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import SearchResult from "../Shared/SearchResult";
+import { delete_cookie } from "sfcookies";
 
 const LeftSidebar = () => {
   const { setAuthUser } = useAuthContext();
-  const { mutateAsync: signOutFn } = useSignOutMutation();
 
   const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await signOutFn();
+  const handleLogout = () => {
+    delete_cookie("jwt");
     setAuthUser(null);
     localStorage.removeItem("auth-user");
     navigate("/sign-in");

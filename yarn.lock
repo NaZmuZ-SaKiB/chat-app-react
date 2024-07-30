@@ -858,6 +858,11 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+"@types/sfcookies@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@types/sfcookies/-/sfcookies-1.0.5.tgz#830340991480ee0dae148f8ff167e01d7889328a"
+  integrity sha512-nNBmgnAonQp8WhrncxruUFSsrB/O1p1vu71KNMMcB/vE4576Cv/zerd+IfbqaxDF2YVMCCJYngn+pSY5xrYvDQ==
+
 "@typescript-eslint/eslint-plugin@^7.15.0":
   version "7.16.1"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-7.16.1.tgz#f5f5da52db674b1f2cdb9d5f3644e5b2ec750465"
@@ -2328,6 +2333,11 @@ semver@^7.6.0:
   version "7.6.3"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.3.tgz#980f7b5550bc175fb4dc09403085627f9eb33143"
   integrity sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==
+
+sfcookies@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/sfcookies/-/sfcookies-1.0.2.tgz#e2df7b4d4c9db15965bbab9a9ce72829daff5bb9"
+  integrity sha512-RnSv7iL0li3eIIW7NlE616E23mKupGzzNU75snc+4+ZdTETJI209JUjQDZ35b12AQoLcqXd/5Ak/xUrzjaTzVw==
 
 shebang-command@^2.0.0:
   version "2.0.0"

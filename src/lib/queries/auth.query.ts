@@ -12,9 +12,3 @@ export const useSignInMutation = () =>
     mutationFn: async (data: any) =>
       (await axiosClient.post("/auth/sign-in", data)) as TResponse,
   });
-
-export const useSignOutMutation = () =>
-  useMutation({
-    mutationFn: async () =>
-      (await axiosClient.post("/auth/sign-out")) as TResponse,
-  });

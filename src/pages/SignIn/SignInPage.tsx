@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { bake_cookie } from "sfcookies";
 import { z } from "zod";
 
 type TFormType = z.infer<typeof signInSchema>;
@@ -51,8 +52,9 @@ const SignInPage = () => {
       const result = await signInFn(data);
 
       if (result.success) {
-        setAuthUser(result.data);
-        localStorage.setItem("auth-user", JSON.stringify(result.data));
+        bake_cookie("jwt", result?.data?.token);
+        setAuthUser(result.data?.user);
+        localStorage.setItem("auth-user", JSON.stringify(result.data?.user));
         navigate("/");
       } else {
         setError(result.message);

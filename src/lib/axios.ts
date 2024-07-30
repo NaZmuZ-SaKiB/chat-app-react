@@ -12,6 +12,9 @@ const axiosClient = axios.create({
   baseURL: `${import.meta.env.VITE_BASE_API_URL}/api`,
   validateStatus: () => true,
   withCredentials: true,
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+  },
 });
 
 axiosClient.defaults.headers["Content-Type"] = "application/json";
