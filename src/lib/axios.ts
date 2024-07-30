@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios from "axios";
+import { read_cookie } from "sfcookies";
 
 export type TResponse = {
   statusCode: number;
@@ -18,6 +19,19 @@ const axiosClient = axios.create({
 });
 
 axiosClient.defaults.headers["Content-Type"] = "application/json";
+
+axiosClient.interceptors.request.use(
+  (config) => {
+    const token = read_cookie("jwt");
+    if (token) {
+      config.headers.Authorization = `${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 //@ts-ignore
 axiosClient.interceptors.response.use((response) => {
