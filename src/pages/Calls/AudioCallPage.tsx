@@ -81,7 +81,7 @@ const AudioCallPage = () => {
   return (
     <div className="w-full h-svh grid place-items-center">
       <h1>{role === "caller" ? "Calling..." : "Receiving Call..."}</h1>
-      <video ref={remoteAudioRef} hidden />
+      <video ref={remoteAudioRef} />
     </div>
   );
 };
