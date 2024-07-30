@@ -13,7 +13,6 @@ const AudioCallPage = () => {
     authUser?._id === id ? "receiver" : "caller";
 
   const remoteAudioRef = useRef<HTMLVideoElement>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     peer?.on("call", async (call) => {
@@ -21,8 +20,6 @@ const AudioCallPage = () => {
         audio: false,
         video: true,
       });
-
-      mediaStreamRef.current = getUserMedia;
 
       call.answer(getUserMedia);
 
@@ -35,12 +32,6 @@ const AudioCallPage = () => {
 
       console.log("Answering...");
     });
-
-    return () => {
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-      }
-    };
   }, [peer]);
 
   useEffect(() => {
@@ -50,8 +41,6 @@ const AudioCallPage = () => {
           audio: false,
           video: true,
         });
-
-        mediaStreamRef.current = getUserMedia;
 
         const call = peer?.call(id as string, getUserMedia);
 
@@ -69,19 +58,10 @@ const AudioCallPage = () => {
     }
   }, [id, peer, role]);
 
-  // Cleanup when the component unmounts
-  useEffect(() => {
-    return () => {
-      // Stop the media tracks
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, []);
   return (
     <div className="w-full h-svh grid place-items-center">
       <h1>{role === "caller" ? "Calling..." : "Receiving Call..."}</h1>
-      <video ref={remoteAudioRef} />
+      <video ref={remoteAudioRef} height={500} width={500} />
     </div>
   );
 };
