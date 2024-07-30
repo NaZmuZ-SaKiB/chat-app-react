@@ -6,6 +6,7 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthContextProvider from "./context/AuthContextProvider";
 import SocketContextProvider from "./context/SocketContextProvider";
+import PeerContextProvider from "./context/PeerContextProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
         <SocketContextProvider>
-          <RouterProvider router={routes} />
+          <PeerContextProvider>
+            <RouterProvider router={routes} />
+          </PeerContextProvider>
         </SocketContextProvider>
       </AuthContextProvider>
     </QueryClientProvider>

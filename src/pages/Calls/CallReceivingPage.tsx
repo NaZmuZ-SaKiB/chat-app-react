@@ -1,7 +1,9 @@
 import { useAuthContext } from "@/context/AuthContextProvider";
+import { usePeerContext } from "@/context/PeerContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
 import { Phone, X } from "lucide-react";
+import Peer from "peerjs";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -10,6 +12,7 @@ const CallReceivingPage = () => {
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
+  const { peer, setPeer } = usePeerContext();
 
   const navigate = useNavigate();
 
@@ -58,6 +61,17 @@ const CallReceivingPage = () => {
     }
     navigate(`/audio-call/${authUser?._id}`);
   };
+
+  useEffect(() => {
+    if (!peer) {
+      const newPeer = new Peer(authUser?._id?.toString());
+
+      newPeer.on("open", (peerId) => {
+        console.log("PeerJS connected with ID:", peerId);
+        setPeer(newPeer);
+      });
+    }
+  }, [peer, setPeer, authUser]);
 
   return (
     <div className="w-full h-svh grid place-items-center">

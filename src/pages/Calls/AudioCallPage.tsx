@@ -1,34 +1,28 @@
 import { useAuthContext } from "@/context/AuthContextProvider";
-import { useSocketContext } from "@/context/SocketContextProvider";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import Peer from "peerjs";
+import { usePeerContext } from "@/context/PeerContextProvider";
 
 const AudioCallPage = () => {
   const { id } = useParams(); // id is the receiver ID
 
   const { authUser } = useAuthContext(); // Get authenticated user
-  const { socket } = useSocketContext();
+  const { peer } = usePeerContext();
 
-  const [peer, setPeer] = useState<Peer | null>(null);
   const role: "caller" | "receiver" =
     authUser?._id === id ? "receiver" : "caller";
 
   const remoteAudioRef = useRef<HTMLAudioElement>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
-    const newPeer = new Peer(authUser?._id?.toString());
-
-    newPeer.on("open", (peerId) => {
-      console.log("PeerJS connected with ID:", peerId);
-      setPeer(newPeer);
-    });
-
-    newPeer.on("call", async (call) => {
+    peer?.on("call", async (call) => {
       const getUserMedia = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: false,
       });
+
+      mediaStreamRef.current = getUserMedia;
 
       call.answer(getUserMedia);
 
@@ -43,9 +37,11 @@ const AudioCallPage = () => {
     });
 
     return () => {
-      newPeer.destroy();
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
     };
-  }, [id, authUser?._id, socket, role]);
+  }, [peer]);
 
   useEffect(() => {
     if (role === "caller") {
@@ -54,6 +50,8 @@ const AudioCallPage = () => {
           audio: true,
           video: false,
         });
+
+        mediaStreamRef.current = getUserMedia;
 
         const call = peer?.call(id as string, getUserMedia);
 
@@ -71,10 +69,19 @@ const AudioCallPage = () => {
     }
   }, [id, peer, role]);
 
+  // Cleanup when the component unmounts
+  useEffect(() => {
+    return () => {
+      // Stop the media tracks
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
   return (
     <div className="w-full h-svh grid place-items-center">
       <h1>{role === "caller" ? "Calling..." : "Receiving Call..."}</h1>
-      <audio ref={remoteAudioRef} controls />
+      <audio ref={remoteAudioRef} hidden />
     </div>
   );
 };
