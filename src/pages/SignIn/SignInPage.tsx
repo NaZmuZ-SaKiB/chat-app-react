@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/context/AuthContextProvider";
 import { useSignInMutation } from "@/lib/queries/auth.query";
 import { signInSchema } from "@/lib/validations/auth.validation";
+import generateTokenExpirationDate from "@/utils/generateTokenExpirationDate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -52,7 +53,7 @@ const SignInPage = () => {
       const result = await signInFn(data);
 
       if (result.success) {
-        bake_cookie("jwt", result?.data?.token);
+        bake_cookie("jwt", result?.data?.token, generateTokenExpirationDate());
         setAuthUser(result.data?.user);
         localStorage.setItem("auth-user", JSON.stringify(result.data?.user));
         navigate("/");
