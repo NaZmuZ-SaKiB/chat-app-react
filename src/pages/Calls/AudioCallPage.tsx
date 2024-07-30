@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import Peer from "peerjs";
 
 const AudioCallPage = () => {
-  const { id } = useParams(); // id is the peer ID
+  const { id } = useParams(); // id is the receiver ID
 
   const { authUser } = useAuthContext(); // Get authenticated user
   const { socket } = useSocketContext();
@@ -21,32 +21,25 @@ const AudioCallPage = () => {
 
     newPeer.on("open", (peerId) => {
       console.log("PeerJS connected with ID:", peerId);
-
       setPeer(newPeer);
     });
 
-    newPeer.on("call", (incomingCall) => {
-      console.log("Incoming call received");
-      if (role === "receiver") {
-        navigator.mediaDevices
-          .getUserMedia({ video: false, audio: true })
-          .then((stream) => {
-            incomingCall.answer(stream);
+    newPeer.on("call", async (call) => {
+      const getUserMedia = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false,
+      });
 
-            incomingCall.on("stream", (remoteStream) => {
-              if (remoteAudioRef.current) {
-                remoteAudioRef.current.autoplay = true;
-                remoteAudioRef.current.muted = false;
-                remoteAudioRef.current.srcObject = remoteStream;
-                remoteAudioRef.current
-                  .play()
-                  .catch((err) => console.error("Audio play error:", err));
-                console.log("Remote stream received", remoteStream);
-              }
-            });
-          })
-          .catch((err) => console.error("Failed to get local stream", err));
-      }
+      call.answer(getUserMedia);
+
+      call?.on("stream", (remoteStream) => {
+        if (remoteAudioRef?.current) {
+          remoteAudioRef.current.srcObject = remoteStream;
+          remoteAudioRef.current.play();
+        }
+      });
+
+      console.log("Answering...");
     });
 
     return () => {
@@ -55,30 +48,28 @@ const AudioCallPage = () => {
   }, [id, authUser?._id, socket, role]);
 
   useEffect(() => {
-    if (peer && role === "caller") {
-      console.log("Initiating call to", id);
-      navigator.mediaDevices
-        .getUserMedia({ video: false, audio: true })
-        .then((stream) => {
-          const outgoingCall = peer.call(id as string, stream);
+    if (role === "caller") {
+      const call = async () => {
+        const getUserMedia = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false,
+        });
 
-          outgoingCall.on("stream", (remoteStream) => {
-            if (remoteAudioRef.current) {
-              remoteAudioRef.current.autoplay = true;
-              remoteAudioRef.current.muted = false;
-              remoteAudioRef.current.srcObject = remoteStream;
-              remoteAudioRef.current
-                .play()
-                .catch((err) => console.error("Audio play error:", err));
-              console.log("Remote stream received from call", remoteStream);
-            }
-          });
+        const call = peer?.call(id as string, getUserMedia);
 
-          outgoingCall.on("error", (err) => console.error("Call error:", err));
-        })
-        .catch((err) => console.error("Failed to get local stream", err));
+        call?.on("stream", (remoteStream) => {
+          if (remoteAudioRef?.current) {
+            remoteAudioRef.current.srcObject = remoteStream;
+            remoteAudioRef.current.play();
+          }
+        });
+
+        console.log("Calling...");
+      };
+
+      call();
     }
-  }, [peer, id, role]);
+  }, [id, peer, role]);
 
   return (
     <div className="w-full h-svh grid place-items-center">

@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 type TCallStatus = "calling" | "ringing" | "rejected";
 
 const CallSendingPage = () => {
-  const { id } = useParams(); // id is the conversation id
+  const { id } = useParams(); // id is the user id
 
   const [callStatus, setCallStatus] = useState<TCallStatus>("calling");
 
