@@ -24,8 +24,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuthContext } from "@/context/AuthContextProvider";
-import { bake_cookie } from "sfcookies";
-import generateTokenExpirationDate from "@/utils/generateTokenExpirationDate";
+import Cookie from "js-cookie";
 
 type TFormType = z.infer<typeof signUpSchema>;
 
@@ -63,7 +62,7 @@ const SignUpPage = () => {
     try {
       const result = await signUpFn(data);
       if (result.success) {
-        bake_cookie("jwt", result?.data?.token, generateTokenExpirationDate());
+        Cookie.set("jwt", result.data?.token, { path: "/", expires: 365 });
         setAuthUser(result.data?.user);
         localStorage.setItem("auth-user", JSON.stringify(result.data?.user));
         navigate("/");

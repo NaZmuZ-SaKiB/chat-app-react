@@ -12,13 +12,12 @@ import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/context/AuthContextProvider";
 import { useSignInMutation } from "@/lib/queries/auth.query";
 import { signInSchema } from "@/lib/validations/auth.validation";
-import generateTokenExpirationDate from "@/utils/generateTokenExpirationDate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { bake_cookie } from "sfcookies";
 import { z } from "zod";
+import Cookie from "js-cookie";
 
 type TFormType = z.infer<typeof signInSchema>;
 
@@ -53,7 +52,7 @@ const SignInPage = () => {
       const result = await signInFn(data);
 
       if (result.success) {
-        bake_cookie("jwt", result?.data?.token, generateTokenExpirationDate());
+        Cookie.set("jwt", result.data?.token, { path: "/", expires: 365 });
         setAuthUser(result.data?.user);
         localStorage.setItem("auth-user", JSON.stringify(result.data?.user));
         navigate("/");

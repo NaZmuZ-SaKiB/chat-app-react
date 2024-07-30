@@ -5,7 +5,7 @@ import { useAuthContext } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import SearchResult from "../Shared/SearchResult";
-import { delete_cookie } from "sfcookies";
+import Cookies from "js-cookie";
 
 const LeftSidebar = () => {
   const { setAuthUser } = useAuthContext();
@@ -15,7 +15,7 @@ const LeftSidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    delete_cookie("jwt");
+    Cookies.remove("jwt");
     setAuthUser(null);
     localStorage.removeItem("auth-user");
     navigate("/sign-in");
