@@ -150,24 +150,26 @@ const AudioCallPage = () => {
 
   // Socket Listener
   useEffect(() => {
-    if (!socket) return;
-
     const handleEndCall = () => {
+      peer?.off("call");
+      peer?.removeAllListeners();
+      peer?.destroy();
+
+      setPeer(null);
+
       mediaStream?.getTracks().forEach((track) => {
         track.stop();
       });
 
       setMediaStream(null);
 
-      peer?.off("call");
-      peer?.destroy();
       setStatus("disconnected");
     };
 
-    socket.on("end-call", handleEndCall);
+    socket?.on("end-call", handleEndCall);
 
     return () => {
-      socket.off("end-call", handleEndCall);
+      socket?.off("end-call", handleEndCall);
       mediaStream?.getTracks().forEach((track) => {
         track.stop();
       });
