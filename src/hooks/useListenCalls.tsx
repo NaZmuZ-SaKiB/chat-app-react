@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const useListenCalls = () => {
   const { socket } = useSocketContext();
   const { authUser } = useAuthContext();
-  const { currentCallStatus, setCurrentCallStatus } = useCallContext();
+  const { currentCallStatus } = useCallContext();
 
   const navigate = useNavigate();
 
@@ -16,8 +16,6 @@ const useListenCalls = () => {
       "call",
       (data: { senderId: string; type: "aduio" | "video" }) => {
         if (currentCallStatus === "idle") {
-          setCurrentCallStatus("in-call");
-
           window.open(
             `${window.origin}/call-receiving/${data.senderId}?type=${data.type}`,
             "_blank"
@@ -35,7 +33,7 @@ const useListenCalls = () => {
     return () => {
       socket?.off("call");
     };
-  }, [socket, navigate, authUser, currentCallStatus, setCurrentCallStatus]);
+  }, [socket, navigate, authUser, currentCallStatus]);
 };
 
 export default useListenCalls;

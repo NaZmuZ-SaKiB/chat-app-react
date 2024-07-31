@@ -29,6 +29,8 @@ const CallReceivingPage = () => {
   useEffect(() => {
     if (!socket || !authUser) return;
 
+    setCurrentCallStatus("in-call");
+
     socket?.emit("call-receiving", {
       senderId: id,
       receiverId: authUser?._id?.toString(),
