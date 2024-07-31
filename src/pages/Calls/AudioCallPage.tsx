@@ -151,8 +151,6 @@ const AudioCallPage = () => {
   // Socket Listener
   useEffect(() => {
     const handleEndCall = () => {
-      console.log(otherUser?.name, " ended the call.");
-
       peer?.off("call");
       peer?.removeAllListeners();
       peer?.destroy();

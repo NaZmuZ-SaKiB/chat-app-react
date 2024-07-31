@@ -17,7 +17,7 @@ const CallSendingPage = () => {
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
-  const { peer, setPeer } = usePeerContext();
+  const { setPeer } = usePeerContext();
 
   const navigate = useNavigate();
 
@@ -49,7 +49,13 @@ const CallSendingPage = () => {
       "accept-call",
       (data: { senderId: string; receiverId: string }) => {
         if (data.receiverId === user?._id?.toString()) {
-          navigate(`/audio-call/${data.receiverId}`);
+          const newPeer = new Peer(authUser?._id?.toString());
+
+          newPeer.on("open", (peerId) => {
+            console.log("PeerJS connected with ID:", peerId);
+            setPeer(newPeer);
+            navigate(`/audio-call/${data.receiverId}`);
+          });
         }
       }
     );
@@ -57,8 +63,9 @@ const CallSendingPage = () => {
     return () => {
       socket?.off("call-receiving");
       socket?.off("reject-call");
+      socket?.off("accept-call");
     };
-  }, [socket, setCallStatus, user, navigate]);
+  }, [socket, setCallStatus, user, navigate, authUser, setPeer]);
 
   const cancelCall = () => {
     if (socket) {
@@ -70,17 +77,6 @@ const CallSendingPage = () => {
 
     navigate(-1);
   };
-
-  useEffect(() => {
-    if (!peer) {
-      const newPeer = new Peer(authUser?._id?.toString());
-
-      newPeer.on("open", (peerId) => {
-        console.log("PeerJS connected with ID:", peerId);
-        setPeer(newPeer);
-      });
-    }
-  }, [peer, setPeer, authUser]);
 
   return (
     <div className="w-full h-svh grid place-items-center">

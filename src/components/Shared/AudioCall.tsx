@@ -2,7 +2,7 @@ import { useAuthContext } from "@/context/AuthContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { cn } from "@/lib/utils";
 import { Phone } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 type TProps = {
   otherUserId: string;
@@ -13,7 +13,7 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
   const { socket } = useSocketContext();
   const { authUser } = useAuthContext();
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleCallClick = () => {
     if (!isActive) return;
@@ -24,7 +24,12 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
         senderId: authUser?._id.toString(),
       });
 
-      navigate(`/call-sending/${otherUserId}`);
+      // navigate(`/call-sending/${otherUserId}`);
+      window.open(
+        `${window.origin}/call-sending/${otherUserId}`,
+        "_blank",
+        "width=800,height=600"
+      );
     }
   };
 
