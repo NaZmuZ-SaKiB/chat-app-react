@@ -82,6 +82,9 @@ const AudioCallPage = () => {
         setCallStartTime(Date.now());
       } catch (error) {
         console.error("Error accessing media devices:", error);
+        mediaStream?.getTracks().forEach((track) => {
+          track.stop();
+        });
         setStatus("disconnected");
       }
     });
@@ -125,6 +128,9 @@ const AudioCallPage = () => {
           });
         } catch (error) {
           console.error("Error accessing media devices:", error);
+          mediaStream?.getTracks().forEach((track) => {
+            track.stop();
+          });
           setStatus("disconnected");
         }
       };
