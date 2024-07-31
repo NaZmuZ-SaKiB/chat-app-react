@@ -37,13 +37,15 @@ const AudioCallPage = () => {
   const endCall = () => {
     if (status === "disconnected") return;
 
+    peer?.off("call");
+    peer?.removeAllListeners();
+    peer?.destroy();
+    remoteAudioRef.current === null;
+    setStatus("disconnected");
+
     mediaStream?.getTracks().forEach((track) => {
       track.stop();
     });
-
-    peer?.off("call");
-    peer?.destroy();
-    setStatus("disconnected");
 
     socket?.emit("end-call", { to: otherUserId });
   };
@@ -144,13 +146,16 @@ const AudioCallPage = () => {
           })}
         >
           {status}
-          {status === "connected" && "..."}
+          {status === "connecting" && "..."}
         </p>
 
         <audio ref={remoteAudioRef} playsInline className="hidden" />
 
         {status !== "disconnected" ? (
-          <div className="size-12 flex justify-center items-center rounded-full bg-red-500 cursor-pointer">
+          <div
+            className="size-12 flex justify-center items-center rounded-full bg-red-500 cursor-pointer"
+            onClick={endCall}
+          >
             <Phone fill="white" strokeWidth={0} className="size-7 text-white" />
           </div>
         ) : (
