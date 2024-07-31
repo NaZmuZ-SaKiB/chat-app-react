@@ -17,6 +17,8 @@ const AudioCallPage = () => {
 
   const [status, setStatus] = useState<TStatus>("connecting");
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+  const [callStartTime, setCallStartTime] = useState<number | null>(null);
+  const [timer, setTimer] = useState<number>(0);
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
@@ -33,6 +35,7 @@ const AudioCallPage = () => {
   const otherUser = data?.data;
 
   const remoteAudioRef = useRef<HTMLAudioElement>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const endCall = () => {
     if (status === "disconnected") return;
@@ -76,6 +79,7 @@ const AudioCallPage = () => {
 
         console.log("Answering...");
         setStatus("connected");
+        setCallStartTime(Date.now());
       } catch (error) {
         console.error("Error accessing media devices:", error);
         setStatus("disconnected");
@@ -116,6 +120,7 @@ const AudioCallPage = () => {
               });
 
               setStatus("connected");
+              setCallStartTime(Date.now());
             }
           });
         } catch (error) {
@@ -132,6 +137,33 @@ const AudioCallPage = () => {
     }
   }, [id, peer, role]);
 
+  useEffect(() => {
+    if (status === "connected") {
+      timerRef.current = setInterval(() => {
+        setTimer(Math.floor((Date.now() - (callStartTime || 0)) / 1000));
+      }, 1000);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [status, callStartTime]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
   return (
     <div className="w-full h-svh grid place-items-center">
       <div className="flex flex-col items-center">
@@ -146,13 +178,21 @@ const AudioCallPage = () => {
         </h1>
 
         <p
-          className={cn("capitalize text-slate-500 mb-28", {
+          className={cn("capitalize text-slate-500 mb-2", {
             "text-green-500": status === "connected",
             "text-red-500": status === "disconnected",
           })}
         >
           {status}
           {status === "connecting" && "..."}
+        </p>
+
+        <p
+          className={cn("capitalize text-slate-500 mb-28", {
+            "text-slate-50": status === "connecting",
+          })}
+        >
+          {status === "connected" ? formatTime(timer) : "00:00"}
         </p>
 
         <audio ref={remoteAudioRef} playsInline className="hidden" />
