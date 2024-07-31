@@ -72,7 +72,7 @@ const CallReceivingPage = () => {
             receiverId: authUser?._id?.toString(),
           });
         }
-        navigate(`/audio-call/${authUser?._id}`);
+        navigate(`/audio-call/${authUser?._id}?senderId=${id}`);
       });
     }
   };
