@@ -54,6 +54,7 @@ const AudioCallPage = () => {
 
     setStatus("disconnected");
     socket?.emit("end-call", { to: otherUserId });
+    window.close();
   };
 
   // Answer Call

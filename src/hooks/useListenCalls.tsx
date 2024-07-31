@@ -10,11 +10,7 @@ const useListenCalls = () => {
   useEffect(() => {
     socket?.on("call", (data: { senderId: string }) => {
       // navigate(`/call-receiving/${data.senderId}`);
-      window.open(
-        `${window.origin}/call-receiving/${data.senderId}`,
-        "_blank",
-        "width=800,height=600"
-      );
+      window.open(`${window.origin}/call-receiving/${data.senderId}`, "_blank");
     });
 
     return () => {

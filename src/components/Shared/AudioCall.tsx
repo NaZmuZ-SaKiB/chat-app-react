@@ -25,11 +25,7 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
       });
 
       // navigate(`/call-sending/${otherUserId}`);
-      window.open(
-        `${window.origin}/call-sending/${otherUserId}`,
-        "_blank",
-        "width=800,height=600"
-      );
+      window.open(`${window.origin}/call-sending/${otherUserId}`, "_blank");
     }
   };
 
