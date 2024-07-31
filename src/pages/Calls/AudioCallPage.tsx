@@ -70,14 +70,8 @@ const AudioCallPage = () => {
 
         call.answer(getUserMedia);
 
-        call?.on("stream", async (remoteStream) => {
+        call?.on("stream", (remoteStream) => {
           if (remoteAudioRef?.current) {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const audioDevices = devices.filter(
-              (device) => device.kind === "audiooutput"
-            );
-            await remoteAudioRef.current.setSinkId(audioDevices[0].deviceId);
-
             remoteAudioRef.current.srcObject = remoteStream;
             remoteAudioRef.current.play().catch((error) => {
               console.error("Autoplay error:", error);
@@ -123,14 +117,8 @@ const AudioCallPage = () => {
           const call = peer?.call(id as string, getUserMedia);
           console.log("Calling...");
 
-          call?.on("stream", async (remoteStream) => {
+          call?.on("stream", (remoteStream) => {
             if (remoteAudioRef?.current) {
-              const devices = await navigator.mediaDevices.enumerateDevices();
-              const audioDevices = devices.filter(
-                (device) => device.kind === "audiooutput"
-              );
-              await remoteAudioRef.current.setSinkId(audioDevices[0].deviceId);
-
               remoteAudioRef.current.srcObject = remoteStream;
               remoteAudioRef.current.play().catch((error) => {
                 console.error("Autoplay error:", error);
