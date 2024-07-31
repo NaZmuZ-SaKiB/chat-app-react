@@ -8,10 +8,16 @@ const useListenCalls = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket?.on("call", (data: { senderId: string }) => {
-      // navigate(`/call-receiving/${data.senderId}`);
-      window.open(`${window.origin}/call-receiving/${data.senderId}`, "_blank");
-    });
+    socket?.on(
+      "call",
+      (data: { senderId: string; type: "aduio" | "video" }) => {
+        // navigate(`/call-receiving/${data.senderId}`);
+        window.open(
+          `${window.origin}/call-receiving/${data.senderId}?type=${data.type}`,
+          "_blank"
+        );
+      }
+    );
 
     return () => {
       socket?.off("call");

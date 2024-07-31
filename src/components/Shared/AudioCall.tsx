@@ -22,10 +22,14 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
       socket.emit("call", {
         receiverId: otherUserId,
         senderId: authUser?._id.toString(),
+        type: "audio",
       });
 
       // navigate(`/call-sending/${otherUserId}`);
-      window.open(`${window.origin}/call-sending/${otherUserId}`, "_blank");
+      window.open(
+        `${window.origin}/call-sending/${otherUserId}?type=audio`,
+        "_blank"
+      );
     }
   };
 

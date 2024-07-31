@@ -6,10 +6,13 @@ import { cn } from "@/lib/utils";
 import { Phone, X } from "lucide-react";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 const CallReceivingPage = () => {
   const { id } = useParams(); // id is the sender user id
+  const [searchParams] = useSearchParams();
+  const callType = searchParams.get("type");
+
   const [status, setStatus] = useState<"incoming" | "connecting">("incoming");
 
   const { authUser } = useAuthContext();
@@ -41,7 +44,7 @@ const CallReceivingPage = () => {
     return () => {
       socket?.off("cancel-call");
     };
-  }, [socket, id, authUser, navigate]);
+  }, [socket, id, authUser, navigate, callType]);
 
   const rejectCall = () => {
     if (socket) {
@@ -69,16 +72,19 @@ const CallReceivingPage = () => {
         socket.emit("accept-call", {
           senderId: id,
           receiverId: authUser?._id?.toString(),
+          type: callType,
         });
       }
-      navigate(`/audio-call/${authUser?._id}?senderId=${id}`);
+      navigate(`/${callType}-call/${authUser?._id}?senderId=${id}`);
     });
   };
 
   return (
     <div className="w-full h-svh grid place-items-center">
       <div className="flex flex-col items-center">
-        <h2 className="font-medium text-lg text-slate-500 mb-5">Audio Call</h2>
+        <h2 className="font-medium text-lg text-slate-500 mb-5 capitalize">
+          {callType} Call
+        </h2>
 
         <div className="size-40 bg-slate-200 rounded-full relative mb-3">
           <img src={user?.image} alt={user?.username} />

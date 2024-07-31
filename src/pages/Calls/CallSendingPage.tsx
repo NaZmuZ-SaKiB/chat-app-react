@@ -6,12 +6,14 @@ import { cn } from "@/lib/utils";
 import { Phone, X } from "lucide-react";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 type TCallStatus = "calling" | "ringing" | "rejected";
 
 const CallSendingPage = () => {
   const { id } = useParams(); // id is the user id
+  const [searchParams] = useSearchParams();
+  const callType = searchParams.get("type");
 
   const [callStatus, setCallStatus] = useState<TCallStatus>("calling");
 
@@ -47,14 +49,14 @@ const CallSendingPage = () => {
 
     socket?.on(
       "accept-call",
-      (data: { senderId: string; receiverId: string }) => {
+      (data: { senderId: string; receiverId: string; type: string }) => {
         if (data.receiverId === user?._id?.toString()) {
           const newPeer = new Peer(authUser?._id?.toString());
 
           newPeer.on("open", (peerId) => {
             console.log("PeerJS connected with ID:", peerId);
             setPeer(newPeer);
-            navigate(`/audio-call/${data.receiverId}`);
+            navigate(`/${data.type}-call/${data.receiverId}`);
           });
         }
       }
@@ -81,7 +83,9 @@ const CallSendingPage = () => {
   return (
     <div className="w-full h-svh grid place-items-center">
       <div className="flex flex-col items-center">
-        <h2 className="font-medium text-lg text-slate-500 mb-5">Audio Call</h2>
+        <h2 className="font-medium text-lg text-slate-500 mb-5 capitalize">
+          {callType} Call
+        </h2>
 
         <div className="size-40 bg-slate-200 rounded-full relative mb-3">
           <img src={user?.image} alt={user?.username} />
