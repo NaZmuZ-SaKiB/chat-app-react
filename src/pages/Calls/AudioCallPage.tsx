@@ -38,6 +38,10 @@ const AudioCallPage = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const endCall = () => {
+    mediaStream?.getTracks().forEach((track) => {
+      track.stop();
+    });
+
     if (status === "disconnected") return;
 
     peer?.off("call");
@@ -45,10 +49,6 @@ const AudioCallPage = () => {
     peer?.destroy();
     remoteAudioRef.current === null;
     setStatus("disconnected");
-
-    mediaStream?.getTracks().forEach((track) => {
-      track.stop();
-    });
 
     socket?.emit("end-call", { to: otherUserId });
   };
@@ -192,7 +192,7 @@ const AudioCallPage = () => {
             "text-slate-50": status === "connecting",
           })}
         >
-          {status === "connected" ? formatTime(timer) : "00:00"}
+          {status !== "connecting" ? formatTime(timer) : "00:00"}
         </p>
 
         <audio ref={remoteAudioRef} playsInline className="hidden" />
