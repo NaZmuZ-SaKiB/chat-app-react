@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/context/AuthContextProvider";
+import { useCallContext } from "@/context/CallStatusContextProvider";
 import { usePeerContext } from "@/context/PeerContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
@@ -18,6 +19,7 @@ const CallReceivingPage = () => {
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
   const { setPeer } = usePeerContext();
+  const { setCurrentCallStatus } = useCallContext();
 
   const navigate = useNavigate();
 
@@ -36,6 +38,7 @@ const CallReceivingPage = () => {
       "cancel-call",
       (data: { senderId: string; receiverId: string }) => {
         if (data.receiverId === authUser?._id?.toString()) {
+          setCurrentCallStatus("idle");
           navigate(-1);
         }
       }
@@ -44,7 +47,7 @@ const CallReceivingPage = () => {
     return () => {
       socket?.off("cancel-call");
     };
-  }, [socket, id, authUser, navigate, callType]);
+  }, [socket, id, authUser, navigate, callType, setCurrentCallStatus]);
 
   const rejectCall = () => {
     if (socket) {
@@ -53,6 +56,8 @@ const CallReceivingPage = () => {
         receiverId: authUser?._id?.toString(),
       });
     }
+
+    setCurrentCallStatus("idle");
 
     navigate(-1);
   };

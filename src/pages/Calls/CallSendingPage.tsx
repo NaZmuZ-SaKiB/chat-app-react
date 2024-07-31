@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/context/AuthContextProvider";
+import { useCallContext } from "@/context/CallStatusContextProvider";
 import { usePeerContext } from "@/context/PeerContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
@@ -8,7 +9,7 @@ import Peer from "peerjs";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-type TCallStatus = "calling" | "ringing" | "rejected";
+type TCallStatus = "calling" | "ringing" | "rejected" | "in another call";
 
 const CallSendingPage = () => {
   const { id } = useParams(); // id is the user id
@@ -20,6 +21,7 @@ const CallSendingPage = () => {
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
   const { setPeer } = usePeerContext();
+  const { setCurrentCallStatus } = useCallContext();
 
   const navigate = useNavigate();
 
@@ -27,7 +29,7 @@ const CallSendingPage = () => {
   const user = data?.data;
 
   useEffect(() => {
-    if (!socket) return;
+    setCurrentCallStatus("in-call");
 
     socket?.on(
       "call-receiving",
@@ -40,9 +42,15 @@ const CallSendingPage = () => {
 
     socket?.on(
       "reject-call",
-      (data: { senderId: string; receiverId: string }) => {
+      (data: { senderId: string; receiverId: string; cause?: string }) => {
         if (data.receiverId === user?._id?.toString()) {
-          setCallStatus("rejected");
+          if (data?.cause === "busy") {
+            setCallStatus("in another call");
+          } else {
+            setCallStatus("rejected");
+          }
+
+          setCurrentCallStatus("idle");
         }
       }
     );
@@ -67,7 +75,15 @@ const CallSendingPage = () => {
       socket?.off("reject-call");
       socket?.off("accept-call");
     };
-  }, [socket, setCallStatus, user, navigate, authUser, setPeer]);
+  }, [
+    socket,
+    setCallStatus,
+    user,
+    navigate,
+    authUser,
+    setPeer,
+    setCurrentCallStatus,
+  ]);
 
   const cancelCall = () => {
     if (socket) {
@@ -76,7 +92,7 @@ const CallSendingPage = () => {
         receiverId: user?._id?.toString(),
       });
     }
-
+    setCurrentCallStatus("idle");
     navigate(-1);
   };
 
