@@ -54,7 +54,10 @@ const AudioCallPage = () => {
     peer?.on("call", async (call) => {
       try {
         const getUserMedia = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: {
+            facingMode: "user",
+            echoCancellation: true,
+          },
           video: false,
         });
 
@@ -93,7 +96,10 @@ const AudioCallPage = () => {
       const call = async () => {
         try {
           const getUserMedia = await navigator.mediaDevices.getUserMedia({
-            audio: true,
+            audio: {
+              facingMode: "user",
+              echoCancellation: true,
+            },
             video: false,
           });
 
