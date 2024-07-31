@@ -41,8 +41,9 @@ const AudioCallPage = () => {
     peer?.off("call");
     peer?.removeAllListeners();
     peer?.destroy();
+
     setPeer(null);
-    remoteAudioRef.current === null;
+    setMediaStream(null);
 
     mediaStream?.getTracks().forEach((track) => {
       track.stop();
@@ -54,6 +55,7 @@ const AudioCallPage = () => {
     socket?.emit("end-call", { to: otherUserId });
   };
 
+  // Answer Call
   useEffect(() => {
     peer?.on("call", async (call) => {
       try {
@@ -83,6 +85,7 @@ const AudioCallPage = () => {
         mediaStream?.getTracks().forEach((track) => {
           track.stop();
         });
+        setMediaStream(null);
         setStatus("disconnected");
       }
     });
@@ -92,9 +95,11 @@ const AudioCallPage = () => {
       mediaStream?.getTracks().forEach((track) => {
         track.stop();
       });
+      setMediaStream(null);
     };
   }, [peer]);
 
+  // Send Call
   useEffect(() => {
     if (role === "caller") {
       const call = async () => {
@@ -125,6 +130,7 @@ const AudioCallPage = () => {
           mediaStream?.getTracks().forEach((track) => {
             track.stop();
           });
+          setMediaStream(null);
           setStatus("disconnected");
         }
       };
@@ -136,10 +142,12 @@ const AudioCallPage = () => {
         mediaStream?.getTracks().forEach((track) => {
           track.stop();
         });
+        setMediaStream(null);
       };
     }
   }, [id, peer, role]);
 
+  // Socket Listener
   useEffect(() => {
     if (!socket) return;
 
@@ -148,6 +156,8 @@ const AudioCallPage = () => {
         track.stop();
       });
 
+      setMediaStream(null);
+
       peer?.off("call");
       peer?.destroy();
       setStatus("disconnected");
@@ -155,6 +165,10 @@ const AudioCallPage = () => {
 
     return () => {
       socket.off("end-call");
+      mediaStream?.getTracks().forEach((track) => {
+        track.stop();
+      });
+      setMediaStream(null);
     };
   }, [socket, peer]);
 
@@ -175,12 +189,6 @@ const AudioCallPage = () => {
       }
     };
   }, [status, callStartTime]);
-
-  useEffect(() => {
-    return () => {
-      endCall();
-    };
-  }, []);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
