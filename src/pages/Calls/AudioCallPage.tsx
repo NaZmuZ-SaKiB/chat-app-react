@@ -2,7 +2,7 @@
 
 import { useAuthContext } from "@/context/AuthContextProvider";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { usePeerContext } from "@/context/PeerContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
 import { Phone, X } from "lucide-react";
@@ -24,7 +24,7 @@ const AudioCallPage = () => {
   const { socket } = useSocketContext();
   const { peer, setPeer } = usePeerContext();
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const role: "caller" | "receiver" =
     authUser?._id === id ? "receiver" : "caller";
@@ -247,7 +247,7 @@ const AudioCallPage = () => {
         ) : (
           <div
             className="size-12 flex justify-center items-center rounded-full bg-slate-500 cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => window.close()}
           >
             <X className="size-8 text-white" />
           </div>
