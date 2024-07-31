@@ -14,16 +14,14 @@ const AudioCallPage = () => {
   const role: "caller" | "receiver" =
     authUser?._id === id ? "receiver" : "caller";
 
-  const remoteAudioRef = useRef<HTMLVideoElement>(null);
+  const remoteAudioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     peer?.on("call", async (call) => {
       try {
         const getUserMedia = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: {
-            facingMode: "user",
-          },
+          audio: true,
+          video: false,
         });
 
         setMediaStream(getUserMedia);
@@ -58,8 +56,8 @@ const AudioCallPage = () => {
       const call = async () => {
         try {
           const getUserMedia = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: true,
+            audio: true,
+            video: false,
           });
 
           setMediaStream(getUserMedia);
@@ -95,7 +93,7 @@ const AudioCallPage = () => {
   return (
     <div className="w-full h-svh grid place-items-center">
       <h1>{role === "caller" ? "Calling..." : "Receiving Call..."}</h1>
-      <video ref={remoteAudioRef} playsInline height={500} width={500} />
+      <audio ref={remoteAudioRef} playsInline />
     </div>
   );
 };
