@@ -16,6 +16,7 @@ const AudioCallPage = () => {
   const [searchParams] = useSearchParams();
 
   const [status, setStatus] = useState<TStatus>("connecting");
+  const [ended, setEnded] = useState<boolean>(false);
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [callStartTime, setCallStartTime] = useState<number | null>(null);
   const [timer, setTimer] = useState<number>(0);
@@ -38,19 +39,20 @@ const AudioCallPage = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const endCall = () => {
-    mediaStream?.getTracks().forEach((track) => {
-      track.stop();
-    });
-
-    if (status === "disconnected") return;
-
     peer?.off("call");
     peer?.removeAllListeners();
     peer?.destroy();
     remoteAudioRef.current === null;
     setStatus("disconnected");
 
-    socket?.emit("end-call", { to: otherUserId });
+    mediaStream?.getTracks().forEach((track) => {
+      track.stop();
+    });
+
+    if (!ended) {
+      socket?.emit("end-call", { to: otherUserId });
+      setEnded(true);
+    }
   };
 
   useEffect(() => {
