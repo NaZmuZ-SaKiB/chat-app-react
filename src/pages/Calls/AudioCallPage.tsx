@@ -51,7 +51,7 @@ const AudioCallPage = () => {
         track.stop();
       });
     };
-  }, [peer, mediaStream]);
+  }, [peer]);
 
   useEffect(() => {
     if (role === "caller") {
@@ -90,7 +90,7 @@ const AudioCallPage = () => {
         });
       };
     }
-  }, [id, peer, role, mediaStream]);
+  }, [id, peer, role]);
 
   return (
     <div className="w-full h-svh grid place-items-center">
