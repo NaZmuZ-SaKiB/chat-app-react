@@ -176,6 +176,12 @@ const AudioCallPage = () => {
     };
   }, [status, callStartTime]);
 
+  useEffect(() => {
+    return () => {
+      endCall();
+    };
+  }, []);
+
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
