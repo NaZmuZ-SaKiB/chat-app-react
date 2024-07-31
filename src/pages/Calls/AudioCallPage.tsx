@@ -43,11 +43,12 @@ const AudioCallPage = () => {
     peer?.destroy();
 
     setPeer(null);
-    setMediaStream(null);
 
     mediaStream?.getTracks().forEach((track) => {
       track.stop();
     });
+
+    setMediaStream(null);
 
     if (status === "disconnected") return;
 
@@ -151,7 +152,7 @@ const AudioCallPage = () => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("end-call", () => {
+    const handleEndCall = () => {
       mediaStream?.getTracks().forEach((track) => {
         track.stop();
       });
@@ -161,10 +162,12 @@ const AudioCallPage = () => {
       peer?.off("call");
       peer?.destroy();
       setStatus("disconnected");
-    });
+    };
+
+    socket.on("end-call", handleEndCall);
 
     return () => {
-      socket.off("end-call");
+      socket.off("end-call", handleEndCall);
       mediaStream?.getTracks().forEach((track) => {
         track.stop();
       });
