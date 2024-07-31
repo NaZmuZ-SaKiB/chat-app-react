@@ -16,7 +16,6 @@ const AudioCallPage = () => {
   const [searchParams] = useSearchParams();
 
   const [status, setStatus] = useState<TStatus>("connecting");
-  const [ended, setEnded] = useState<boolean>(false);
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [callStartTime, setCallStartTime] = useState<number | null>(null);
   const [timer, setTimer] = useState<number>(0);
@@ -43,26 +42,22 @@ const AudioCallPage = () => {
     peer?.removeAllListeners();
     peer?.destroy();
     remoteAudioRef.current === null;
-    setStatus("disconnected");
 
     mediaStream?.getTracks().forEach((track) => {
       track.stop();
     });
 
-    if (!ended) {
-      socket?.emit("end-call", { to: otherUserId });
-      setEnded(true);
-    }
+    if (status === "disconnected") return;
+
+    setStatus("disconnected");
+    socket?.emit("end-call", { to: otherUserId });
   };
 
   useEffect(() => {
     peer?.on("call", async (call) => {
       try {
         const getUserMedia = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            facingMode: "user",
-            echoCancellation: true,
-          },
+          audio: true,
           video: false,
         });
 
@@ -91,24 +86,20 @@ const AudioCallPage = () => {
       }
     });
 
-    socket?.on("end-call", () => {
-      endCall();
-    });
-
     return () => {
-      endCall();
+      peer?.off("call");
+      mediaStream?.getTracks().forEach((track) => {
+        track.stop();
+      });
     };
-  }, [peer]);
+  }, [peer, mediaStream]);
 
   useEffect(() => {
     if (role === "caller") {
       const call = async () => {
         try {
           const getUserMedia = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              facingMode: "user",
-              echoCancellation: true,
-            },
+            audio: true,
             video: false,
           });
 
@@ -140,10 +131,31 @@ const AudioCallPage = () => {
       call();
 
       return () => {
-        endCall();
+        peer?.off("call");
+        mediaStream?.getTracks().forEach((track) => {
+          track.stop();
+        });
       };
     }
-  }, [id, peer, role]);
+  }, [id, peer, role, mediaStream]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("end-call", () => {
+      mediaStream?.getTracks().forEach((track) => {
+        track.stop();
+      });
+
+      peer?.off("call");
+      peer?.destroy();
+      setStatus("disconnected");
+    });
+
+    return () => {
+      socket.off("end-call");
+    };
+  }, [socket, mediaStream, peer]);
 
   useEffect(() => {
     if (status === "connected") {

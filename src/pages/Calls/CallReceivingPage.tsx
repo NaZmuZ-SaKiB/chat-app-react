@@ -14,7 +14,7 @@ const CallReceivingPage = () => {
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
-  const { peer, setPeer } = usePeerContext();
+  const { setPeer } = usePeerContext();
 
   const navigate = useNavigate();
 
@@ -59,22 +59,22 @@ const CallReceivingPage = () => {
 
     setStatus("connecting");
 
-    if (!peer) {
-      const newPeer = new Peer(authUser?._id?.toString());
+    setPeer(null);
 
-      newPeer.on("open", (peerId) => {
-        console.log("PeerJS connected with ID:", peerId);
-        setPeer(newPeer);
+    const newPeer = new Peer(authUser?._id?.toString());
 
-        if (socket) {
-          socket.emit("accept-call", {
-            senderId: id,
-            receiverId: authUser?._id?.toString(),
-          });
-        }
-        navigate(`/audio-call/${authUser?._id}?senderId=${id}`);
-      });
-    }
+    newPeer.on("open", (peerId) => {
+      console.log("PeerJS connected with ID:", peerId);
+      setPeer(newPeer);
+
+      if (socket) {
+        socket.emit("accept-call", {
+          senderId: id,
+          receiverId: authUser?._id?.toString(),
+        });
+      }
+      navigate(`/audio-call/${authUser?._id}?senderId=${id}`);
+    });
   };
 
   return (

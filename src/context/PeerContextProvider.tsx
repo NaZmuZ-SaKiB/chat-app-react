@@ -3,7 +3,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 type TPeerContext = {
   peer: Peer | null;
-  setPeer: (peer: Peer) => void;
+  setPeer: (peer: Peer | null) => void;
 };
 
 export const PeerContext = createContext<TPeerContext>({
