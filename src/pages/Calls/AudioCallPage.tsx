@@ -22,7 +22,7 @@ const AudioCallPage = () => {
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
-  const { peer } = usePeerContext();
+  const { peer, setPeer } = usePeerContext();
 
   const navigate = useNavigate();
 
@@ -41,6 +41,7 @@ const AudioCallPage = () => {
     peer?.off("call");
     peer?.removeAllListeners();
     peer?.destroy();
+    setPeer(null);
     remoteAudioRef.current === null;
 
     mediaStream?.getTracks().forEach((track) => {
@@ -92,7 +93,7 @@ const AudioCallPage = () => {
         track.stop();
       });
     };
-  }, [peer, mediaStream]);
+  }, [peer]);
 
   useEffect(() => {
     if (role === "caller") {
@@ -137,7 +138,7 @@ const AudioCallPage = () => {
         });
       };
     }
-  }, [id, peer, role, mediaStream]);
+  }, [id, peer, role]);
 
   useEffect(() => {
     if (!socket) return;
@@ -155,7 +156,7 @@ const AudioCallPage = () => {
     return () => {
       socket.off("end-call");
     };
-  }, [socket, mediaStream, peer]);
+  }, [socket, peer]);
 
   useEffect(() => {
     if (status === "connected") {
