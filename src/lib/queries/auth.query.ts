@@ -1,5 +1,12 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosClient, { TResponse } from "../axios";
+
+export const useGetMeQuery = () =>
+  useQuery({
+    queryKey: ["me"],
+    queryFn: async () => (await axiosClient.get("/auth/me")) as TResponse,
+    refetchOnWindowFocus: false,
+  });
 
 export const useSignUpMutation = () =>
   useMutation({

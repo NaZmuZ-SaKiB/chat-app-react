@@ -64,8 +64,8 @@ const SignInPage = () => {
     }
   };
   return (
-    <div className="grid place-items-center w-full min-h-[100svh] p-2">
-      <div className="max-w-sm w-full border rounded-lg p-4">
+    <div className="grid place-items-center w-full min-h-[100svh] py-2 max-xs:bg-slate-100">
+      <div className="max-w-sm w-full bg-slate-100 rounded-lg px-4 py-10">
         <h1 className="text-2xl font-medium text-center mb-10">Sign In</h1>
         <Form {...form}>
           <form

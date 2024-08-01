@@ -28,6 +28,7 @@ const SearchResult = ({ search, setSearch }: TPorps) => {
   return (
     <div>
       <h2 className="font-semibold mb-3">Search Results</h2>
+
       {users.map((user: any) => (
         <Link
           to={`/start-conversation/${user._id}`}
@@ -46,6 +47,10 @@ const SearchResult = ({ search, setSearch }: TPorps) => {
           </div>
         </Link>
       ))}
+
+      {users.length === 0 && !isLoading && (
+        <p className="text-center text-gray-500">No user found</p>
+      )}
     </div>
   );
 };

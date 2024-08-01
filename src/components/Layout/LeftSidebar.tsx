@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import SearchResult from "../Shared/SearchResult";
 import Cookies from "js-cookie";
+import { useQueryClient } from "@tanstack/react-query";
 
 const LeftSidebar = () => {
   const { authUser, setAuthUser } = useAuthContext();
@@ -14,10 +15,15 @@ const LeftSidebar = () => {
 
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient();
+
   const handleLogout = () => {
     Cookies.remove("jwt");
     setAuthUser(null);
     localStorage.removeItem("auth-user");
+    queryClient.invalidateQueries({
+      queryKey: ["me"],
+    });
     navigate("/sign-in");
   };
   return (
@@ -37,8 +43,11 @@ const LeftSidebar = () => {
             />
           </Link>
 
-          <div className="size-10 rounded-full grid place-items-center cursor-pointer bg-slate-100 hover:bg-slate-200">
-            <LogOut className="size-5 rotate-180" onClick={handleLogout} />
+          <div
+            className="size-10 rounded-full grid place-items-center cursor-pointer bg-slate-100 hover:bg-slate-200"
+            onClick={handleLogout}
+          >
+            <LogOut className="size-5 rotate-180" />
           </div>
         </div>
       </div>

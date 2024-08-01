@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import AudioCall from "./AudioCall";
+import UserInfoModal from "./UserInfoModal";
 
 type TProps = {
   user: any;
@@ -43,7 +44,11 @@ const ConversationHeader = ({ user, isActive = undefined }: TProps) => {
         </div>
       </div>
 
-      <AudioCall otherUserId={`${user?._id}`} isActive={isActive || false} />
+      <div className="flex items-center gap-3">
+        <AudioCall otherUserId={`${user?._id}`} isActive={isActive || false} />
+
+        <UserInfoModal user={user} />
+      </div>
     </div>
   );
 };

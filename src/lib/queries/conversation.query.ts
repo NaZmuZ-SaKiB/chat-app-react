@@ -12,6 +12,7 @@ export const useGetConversationWith = (id: string) =>
   useQuery({
     queryKey: ["conversation-with", id],
     queryFn: async () => await axiosClient.get(`/conversation/${id}`),
+    refetchOnWindowFocus: false,
   });
 
 export const useStartConversationMutation = () =>

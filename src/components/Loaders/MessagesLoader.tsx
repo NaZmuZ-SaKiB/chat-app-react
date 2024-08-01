@@ -1,6 +1,6 @@
 const MessagesLoader = () => {
   return (
-    <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 justify-end">
+    <div className="flex-1 h-full overflow-y-auto p-4 flex flex-col gap-3 justify-end">
       {Array(10)
         .fill(0)
         .map((_, i) => {

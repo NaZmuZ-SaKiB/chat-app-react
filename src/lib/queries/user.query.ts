@@ -14,6 +14,7 @@ export const useGetUserByConversationIdQuery = (id: string) =>
   useQuery({
     queryKey: ["user", id],
     queryFn: async () => await axiosClient.get(`/user/conversation/${id}`),
+    refetchOnWindowFocus: false,
   });
 
 export const useSearchUsersQuery = (searchTerm: string) =>
