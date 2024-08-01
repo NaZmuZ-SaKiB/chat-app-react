@@ -1,5 +1,4 @@
 import { useAuthContext } from "@/context/AuthContextProvider";
-import { useCallContext } from "@/context/CallStatusContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { cn } from "@/lib/utils";
 import { Phone } from "lucide-react";
@@ -13,13 +12,11 @@ type TProps = {
 const AudioCall = ({ otherUserId, isActive }: TProps) => {
   const { socket } = useSocketContext();
   const { authUser } = useAuthContext();
-  const { currentCallStatus } = useCallContext();
 
   // const navigate = useNavigate();
 
   const handleCallClick = () => {
     if (!isActive) return;
-    if (currentCallStatus === "in-call") return;
 
     if (socket) {
       socket.emit("call", {

@@ -8,7 +8,6 @@ import { useGetUserByIdQuery } from "@/lib/queries/user.query";
 import { Phone, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSocketContext } from "@/context/SocketContextProvider";
-import { useCallContext } from "@/context/CallStatusContextProvider";
 
 type TStatus = "connecting" | "connected" | "disconnected";
 
@@ -24,7 +23,6 @@ const AudioCallPage = () => {
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
   const { peer, setPeer } = usePeerContext();
-  const { setCurrentCallStatus } = useCallContext();
 
   // const navigate = useNavigate();
 
@@ -56,7 +54,6 @@ const AudioCallPage = () => {
 
     setStatus("disconnected");
     socket?.emit("end-call", { to: otherUserId });
-    setCurrentCallStatus("idle");
     window.close();
   };
 
@@ -101,7 +98,6 @@ const AudioCallPage = () => {
         track.stop();
       });
       setMediaStream(null);
-      setCurrentCallStatus("idle");
     };
   }, [peer]);
 
@@ -169,7 +165,6 @@ const AudioCallPage = () => {
       setMediaStream(null);
 
       setStatus("disconnected");
-      setCurrentCallStatus("idle");
     };
 
     socket?.on("end-call", handleEndCall);

@@ -7,7 +7,6 @@ import {
 } from "react";
 import io, { Socket } from "socket.io-client";
 import { useAuthContext } from "./AuthContextProvider";
-import { useCallContext } from "./CallStatusContextProvider";
 
 type TContext = {
   socket: Socket | null;
@@ -27,7 +26,6 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
 
   const { authUser } = useAuthContext();
-  const { currentCallStatus } = useCallContext();
 
   useEffect(() => {
     if (authUser) {
@@ -36,10 +34,17 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
           userId: authUser._id.toString(),
         },
         transports: ["websocket"],
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 10,
       });
 
       newSocket.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
+      });
+
+      newSocket.on("connect", () => {
+        console.log("Socket connected");
       });
 
       newSocket.on("connect_error", (err) => {
@@ -63,7 +68,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser, currentCallStatus]);
+  }, [authUser]);
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}

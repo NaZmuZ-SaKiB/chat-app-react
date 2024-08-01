@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useAuthContext } from "@/context/AuthContextProvider";
-import { useCallContext } from "@/context/CallStatusContextProvider";
 import { usePeerContext } from "@/context/PeerContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
@@ -8,6 +8,7 @@ import { Phone, X } from "lucide-react";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+// import Ringtone from "@/assets/audio/ringtone.mp3";
 
 const CallReceivingPage = () => {
   const { id } = useParams(); // id is the sender user id
@@ -19,7 +20,6 @@ const CallReceivingPage = () => {
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
   const { setPeer } = usePeerContext();
-  const { setCurrentCallStatus } = useCallContext();
 
   const navigate = useNavigate();
 
@@ -28,8 +28,6 @@ const CallReceivingPage = () => {
 
   useEffect(() => {
     if (!socket || !authUser) return;
-
-    setCurrentCallStatus("in-call");
 
     socket?.emit("call-receiving", {
       senderId: id,
@@ -40,8 +38,7 @@ const CallReceivingPage = () => {
       "cancel-call",
       (data: { senderId: string; receiverId: string }) => {
         if (data.receiverId === authUser?._id?.toString()) {
-          setCurrentCallStatus("idle");
-          navigate(-1);
+          window.close();
         }
       }
     );
@@ -49,19 +46,18 @@ const CallReceivingPage = () => {
     return () => {
       socket?.off("cancel-call");
     };
-  }, [socket, id, authUser, navigate, callType, setCurrentCallStatus]);
+  }, [socket, id, authUser, navigate, callType]);
 
   const rejectCall = () => {
     if (socket) {
+      console.log("call reject triggered");
       socket.emit("reject-call", {
         senderId: id,
         receiverId: authUser?._id?.toString(),
       });
+
+      window.close();
     }
-
-    setCurrentCallStatus("idle");
-
-    navigate(-1);
   };
 
   const acceptCall = () => {

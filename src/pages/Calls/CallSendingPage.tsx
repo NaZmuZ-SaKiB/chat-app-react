@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useAuthContext } from "@/context/AuthContextProvider";
-import { useCallContext } from "@/context/CallStatusContextProvider";
 import { usePeerContext } from "@/context/PeerContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
@@ -21,7 +21,6 @@ const CallSendingPage = () => {
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
   const { setPeer } = usePeerContext();
-  const { setCurrentCallStatus } = useCallContext();
 
   const navigate = useNavigate();
 
@@ -29,61 +28,51 @@ const CallSendingPage = () => {
   const user = data?.data;
 
   useEffect(() => {
-    setCurrentCallStatus("in-call");
-
-    socket?.on(
-      "call-receiving",
-      (data: { senderId: string; receiverId: string }) => {
-        if (data.receiverId === user?._id?.toString()) {
-          setCallStatus("ringing");
-        }
-      }
-    );
-
-    socket?.on(
-      "reject-call",
-      (data: { senderId: string; receiverId: string; cause?: string }) => {
-        if (data.receiverId === user?._id?.toString()) {
-          if (data?.cause === "busy") {
-            setCallStatus("in another call");
-          } else {
-            setCallStatus("rejected");
+    if (socket) {
+      socket?.on(
+        "call-receiving",
+        (data: { senderId: string; receiverId: string }) => {
+          if (data.receiverId === user?._id?.toString()) {
+            setCallStatus("ringing");
           }
-
-          setCurrentCallStatus("idle");
         }
-      }
-    );
+      );
 
-    socket?.on(
-      "accept-call",
-      (data: { senderId: string; receiverId: string; type: string }) => {
-        if (data.receiverId === user?._id?.toString()) {
-          const newPeer = new Peer(authUser?._id?.toString());
-
-          newPeer.on("open", (peerId) => {
-            console.log("PeerJS connected with ID:", peerId);
-            setPeer(newPeer);
-            navigate(`/${data.type}-call/${data.receiverId}`);
-          });
+      socket?.on(
+        "reject-call",
+        (data: { senderId: string; receiverId: string; cause?: string }) => {
+          if (data.receiverId === user?._id?.toString()) {
+            if (data?.cause === "busy") {
+              setCallStatus("in another call");
+            } else {
+              setCallStatus("rejected");
+            }
+          }
         }
-      }
-    );
+      );
 
-    return () => {
-      socket?.off("call-receiving");
-      socket?.off("reject-call");
-      socket?.off("accept-call");
-    };
-  }, [
-    socket,
-    setCallStatus,
-    user,
-    navigate,
-    authUser,
-    setPeer,
-    setCurrentCallStatus,
-  ]);
+      socket?.on(
+        "accept-call",
+        (data: { senderId: string; receiverId: string; type: string }) => {
+          if (data.receiverId === user?._id?.toString()) {
+            const newPeer = new Peer(authUser?._id?.toString());
+
+            newPeer.on("open", (peerId) => {
+              console.log("PeerJS connected with ID:", peerId);
+              setPeer(newPeer);
+              navigate(`/${data.type}-call/${data.receiverId}`);
+            });
+          }
+        }
+      );
+
+      return () => {
+        socket?.off("call-receiving");
+        socket?.off("reject-call");
+        socket?.off("accept-call");
+      };
+    }
+  }, [socket, setPeer]);
 
   const cancelCall = () => {
     if (socket) {
@@ -92,8 +81,8 @@ const CallSendingPage = () => {
         receiverId: user?._id?.toString(),
       });
     }
-    setCurrentCallStatus("idle");
-    navigate(-1);
+
+    window.close();
   };
 
   return (
@@ -131,7 +120,7 @@ const CallSendingPage = () => {
         ) : (
           <div
             className="size-12 flex justify-center items-center rounded-full bg-slate-500 cursor-pointer"
-            onClick={() => navigate(-1)}
+            onClick={() => window.close()}
           >
             <X className="size-8 text-white" />
           </div>
