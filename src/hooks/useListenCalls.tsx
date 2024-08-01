@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/context/AuthContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
-import { getCallStatus } from "@/utils/localstorage";
+import { getCallStatus, setCallStatus } from "@/utils/localstorage";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +16,7 @@ const useListenCalls = () => {
       (data: { senderId: string; type: "aduio" | "video" }) => {
         const callStatus = getCallStatus();
         if (callStatus === "idle") {
+          setCallStatus("in-call");
           window.open(
             `${window.origin}/call-receiving/${data.senderId}?type=${data.type}`,
             "_blank"

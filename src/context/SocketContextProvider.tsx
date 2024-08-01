@@ -24,6 +24,7 @@ export const useSocketContext = () => useContext(SocketContext);
 const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  console.log("online", onlineUsers);
 
   const { authUser } = useAuthContext();
 

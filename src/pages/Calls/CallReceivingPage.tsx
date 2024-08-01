@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 import { setCallStatus } from "@/utils/localstorage";
 import { Phone, X } from "lucide-react";
 import Peer from "peerjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-// import Ringtone from "@/assets/audio/ringtone.mp3";
+import Ringtone from "@/assets/audio/ringtone.mp3";
 
 const CallReceivingPage = () => {
   const { id } = useParams(); // id is the sender user id
@@ -17,6 +17,8 @@ const CallReceivingPage = () => {
   const callType = searchParams.get("type");
 
   const [status, setStatus] = useState<"incoming" | "connecting">("incoming");
+
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
@@ -27,10 +29,16 @@ const CallReceivingPage = () => {
   const { data } = useGetUserByIdQuery(id as string);
   const user = data?.data;
 
-  useEffect(() => {
-    setCallStatus("in-call");
+  const handleTabClose = () => {
+    socket?.emit("reject-call", {
+      senderId: id,
+      receiverId: authUser?._id?.toString(),
+    });
+    setCallStatus("idle");
+  };
 
-    if (!socket || !authUser) return;
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleTabClose);
 
     socket?.emit("call-receiving", {
       senderId: id,
@@ -48,10 +56,10 @@ const CallReceivingPage = () => {
     );
 
     return () => {
+      window.removeEventListener("beforeunload", handleTabClose);
       socket?.off("cancel-call");
-      setCallStatus("idle");
     };
-  }, [socket, id, authUser, navigate, callType]);
+  }, [socket, authUser]);
 
   const rejectCall = () => {
     if (socket) {
@@ -67,6 +75,7 @@ const CallReceivingPage = () => {
   };
 
   const acceptCall = () => {
+    audioRef.current?.pause();
     if (status === "connecting") return;
 
     setStatus("connecting");
@@ -94,6 +103,8 @@ const CallReceivingPage = () => {
         <h2 className="font-medium text-lg text-slate-500 mb-5 capitalize">
           {callType} Call
         </h2>
+
+        <audio ref={audioRef} autoPlay loop src={Ringtone} playsInline={true} />
 
         <div className="size-40 bg-slate-200 rounded-full relative mb-3">
           <img src={user?.image} alt={user?.username} />

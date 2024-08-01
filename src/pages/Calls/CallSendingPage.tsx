@@ -29,6 +29,16 @@ const CallSendingPage = () => {
   const user = data?.data;
 
   useEffect(() => {
+    const handleTabClose = () => {
+      socket?.emit("cancel-call", {
+        senderId: authUser?._id?.toString(),
+        receiverId: user?._id?.toString(),
+      });
+      setCallStatus("idle");
+    };
+
+    window.addEventListener("beforeunload", handleTabClose);
+
     setCallStatus("in-call");
     if (socket) {
       socket?.on(
@@ -69,6 +79,7 @@ const CallSendingPage = () => {
       );
 
       return () => {
+        window.removeEventListener("beforeunload", handleTabClose);
         socket?.off("call-receiving");
         socket?.off("reject-call");
         socket?.off("accept-call");
