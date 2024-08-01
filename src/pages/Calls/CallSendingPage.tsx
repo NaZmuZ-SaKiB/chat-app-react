@@ -4,6 +4,7 @@ import { usePeerContext } from "@/context/PeerContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
 import { cn } from "@/lib/utils";
+import { setCallStatus } from "@/utils/localstorage";
 import { Phone, X } from "lucide-react";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
@@ -16,7 +17,7 @@ const CallSendingPage = () => {
   const [searchParams] = useSearchParams();
   const callType = searchParams.get("type");
 
-  const [callStatus, setCallStatus] = useState<TCallStatus>("calling");
+  const [callStatus, setStatus] = useState<TCallStatus>("calling");
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
@@ -28,12 +29,13 @@ const CallSendingPage = () => {
   const user = data?.data;
 
   useEffect(() => {
+    setCallStatus("in-call");
     if (socket) {
       socket?.on(
         "call-receiving",
         (data: { senderId: string; receiverId: string }) => {
           if (data.receiverId === user?._id?.toString()) {
-            setCallStatus("ringing");
+            setStatus("ringing");
           }
         }
       );
@@ -41,28 +43,28 @@ const CallSendingPage = () => {
       socket?.on(
         "reject-call",
         (data: { senderId: string; receiverId: string; cause?: string }) => {
-          if (data.receiverId === user?._id?.toString()) {
-            if (data?.cause === "busy") {
-              setCallStatus("in another call");
-            } else {
-              setCallStatus("rejected");
-            }
+          console.log("rejected-call");
+
+          if (data?.cause === "busy") {
+            setStatus("in another call");
+          } else {
+            setStatus("rejected");
           }
+
+          setCallStatus("idle");
         }
       );
 
       socket?.on(
         "accept-call",
         (data: { senderId: string; receiverId: string; type: string }) => {
-          if (data.receiverId === user?._id?.toString()) {
-            const newPeer = new Peer(authUser?._id?.toString());
+          const newPeer = new Peer(authUser?._id?.toString());
 
-            newPeer.on("open", (peerId) => {
-              console.log("PeerJS connected with ID:", peerId);
-              setPeer(newPeer);
-              navigate(`/${data.type}-call/${data.receiverId}`);
-            });
-          }
+          newPeer.on("open", (peerId) => {
+            console.log("PeerJS connected with ID:", peerId);
+            setPeer(newPeer);
+            navigate(`/${data.type}-call/${data.receiverId}`);
+          });
         }
       );
 
@@ -70,6 +72,7 @@ const CallSendingPage = () => {
         socket?.off("call-receiving");
         socket?.off("reject-call");
         socket?.off("accept-call");
+        setCallStatus("idle");
       };
     }
   }, [socket, setPeer]);
@@ -81,6 +84,8 @@ const CallSendingPage = () => {
         receiverId: user?._id?.toString(),
       });
     }
+
+    setCallStatus("idle");
 
     window.close();
   };
@@ -103,7 +108,8 @@ const CallSendingPage = () => {
         <p
           className={cn("capitalize text-slate-500 mb-28", {
             "text-green-500": callStatus === "ringing",
-            "text-red-500": callStatus === "rejected",
+            "text-red-500":
+              callStatus === "rejected" || callStatus === "in another call",
           })}
         >
           {callStatus}

@@ -8,6 +8,7 @@ import { useGetUserByIdQuery } from "@/lib/queries/user.query";
 import { Phone, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSocketContext } from "@/context/SocketContextProvider";
+import { setCallStatus } from "@/utils/localstorage";
 
 type TStatus = "connecting" | "connected" | "disconnected";
 
@@ -38,6 +39,8 @@ const AudioCallPage = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const endCall = () => {
+    setCallStatus("idle");
+
     peer?.off("call");
     peer?.removeAllListeners();
     peer?.destroy();
@@ -59,46 +62,50 @@ const AudioCallPage = () => {
 
   // Answer Call
   useEffect(() => {
-    peer?.on("call", async (call) => {
-      try {
-        const getUserMedia = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false,
-        });
+    if (role === "receiver") {
+      peer?.on("call", async (call) => {
+        try {
+          const getUserMedia = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false,
+          });
 
-        setMediaStream(getUserMedia);
+          setMediaStream(getUserMedia);
 
-        call.answer(getUserMedia);
+          call.answer(getUserMedia);
 
-        call?.on("stream", (remoteStream) => {
-          if (remoteAudioRef?.current) {
-            remoteAudioRef.current.srcObject = remoteStream;
-            remoteAudioRef.current.play().catch((error) => {
-              console.error("Autoplay error:", error);
-            });
-          }
-        });
+          call?.on("stream", (remoteStream) => {
+            if (remoteAudioRef?.current) {
+              remoteAudioRef.current.srcObject = remoteStream;
+              remoteAudioRef.current.play().catch((error) => {
+                console.error("Autoplay error:", error);
+              });
+            }
+          });
 
-        console.log("Answering...");
-        setStatus("connected");
-        setCallStartTime(Date.now());
-      } catch (error) {
-        console.error("Error accessing media devices:", error);
+          console.log("Answering...");
+          setStatus("connected");
+          setCallStartTime(Date.now());
+        } catch (error) {
+          console.error("Error accessing media devices:", error);
+          mediaStream?.getTracks().forEach((track) => {
+            track.stop();
+          });
+          setCallStatus("idle");
+          setMediaStream(null);
+          setStatus("disconnected");
+        }
+      });
+
+      return () => {
+        peer?.off("call");
         mediaStream?.getTracks().forEach((track) => {
           track.stop();
         });
         setMediaStream(null);
-        setStatus("disconnected");
-      }
-    });
-
-    return () => {
-      peer?.off("call");
-      mediaStream?.getTracks().forEach((track) => {
-        track.stop();
-      });
-      setMediaStream(null);
-    };
+        setCallStatus("idle");
+      };
+    }
   }, [peer]);
 
   // Send Call
@@ -134,6 +141,7 @@ const AudioCallPage = () => {
           });
           setMediaStream(null);
           setStatus("disconnected");
+          setCallStatus("idle");
         }
       };
 
@@ -145,6 +153,7 @@ const AudioCallPage = () => {
           track.stop();
         });
         setMediaStream(null);
+        setCallStatus("idle");
       };
     }
   }, [id, peer, role]);
@@ -152,6 +161,7 @@ const AudioCallPage = () => {
   // Socket Listener
   useEffect(() => {
     const handleEndCall = () => {
+      setCallStatus("idle");
       peer?.off("call");
       peer?.removeAllListeners();
       peer?.destroy();
@@ -175,11 +185,13 @@ const AudioCallPage = () => {
         track.stop();
       });
       setMediaStream(null);
+      setCallStatus("idle");
     };
   }, [socket, peer]);
 
   useEffect(() => {
     if (status === "connected") {
+      setCallStatus("in-call");
       timerRef.current = setInterval(() => {
         setTimer(Math.floor((Date.now() - (callStartTime || 0)) / 1000));
       }, 1000);
@@ -193,6 +205,7 @@ const AudioCallPage = () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+      setCallStatus("idle");
     };
   }, [status, callStartTime]);
 

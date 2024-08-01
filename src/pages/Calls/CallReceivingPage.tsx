@@ -4,6 +4,7 @@ import { usePeerContext } from "@/context/PeerContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
 import { cn } from "@/lib/utils";
+import { setCallStatus } from "@/utils/localstorage";
 import { Phone, X } from "lucide-react";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
@@ -27,6 +28,8 @@ const CallReceivingPage = () => {
   const user = data?.data;
 
   useEffect(() => {
+    setCallStatus("in-call");
+
     if (!socket || !authUser) return;
 
     socket?.emit("call-receiving", {
@@ -38,6 +41,7 @@ const CallReceivingPage = () => {
       "cancel-call",
       (data: { senderId: string; receiverId: string }) => {
         if (data.receiverId === authUser?._id?.toString()) {
+          setCallStatus("idle");
           window.close();
         }
       }
@@ -45,6 +49,7 @@ const CallReceivingPage = () => {
 
     return () => {
       socket?.off("cancel-call");
+      setCallStatus("idle");
     };
   }, [socket, id, authUser, navigate, callType]);
 
@@ -56,6 +61,7 @@ const CallReceivingPage = () => {
         receiverId: authUser?._id?.toString(),
       });
 
+      setCallStatus("idle");
       window.close();
     }
   };

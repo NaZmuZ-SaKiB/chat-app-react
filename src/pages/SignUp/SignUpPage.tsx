@@ -25,6 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuthContext } from "@/context/AuthContextProvider";
 import Cookie from "js-cookie";
+import { setCallStatus } from "@/utils/localstorage";
 
 type TFormType = z.infer<typeof signUpSchema>;
 
@@ -65,6 +66,7 @@ const SignUpPage = () => {
         Cookie.set("jwt", result.data?.token, { path: "/", expires: 365 });
         setAuthUser(result.data?.user);
         localStorage.setItem("auth-user", JSON.stringify(result.data?.user));
+        setCallStatus("idle");
         navigate("/");
       } else {
         setError(result.message);

@@ -1,8 +1,8 @@
 import { useAuthContext } from "@/context/AuthContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { cn } from "@/lib/utils";
+import { getCallStatus, setCallStatus } from "@/utils/localstorage";
 import { Phone } from "lucide-react";
-// import { useNavigate } from "react-router-dom";
 
 type TProps = {
   otherUserId: string;
@@ -13,10 +13,10 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
   const { socket } = useSocketContext();
   const { authUser } = useAuthContext();
 
-  // const navigate = useNavigate();
-
   const handleCallClick = () => {
     if (!isActive) return;
+    const callStatus = getCallStatus();
+    if (callStatus === "in-call") return;
 
     if (socket) {
       socket.emit("call", {
@@ -25,7 +25,8 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
         type: "audio",
       });
 
-      // navigate(`/call-sending/${otherUserId}`);
+      setCallStatus("in-call");
+
       window.open(
         `${window.origin}/call-sending/${otherUserId}?type=audio`,
         "_blank"

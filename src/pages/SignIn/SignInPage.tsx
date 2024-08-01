@@ -18,6 +18,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Cookie from "js-cookie";
+import { setCallStatus } from "@/utils/localstorage";
 
 type TFormType = z.infer<typeof signInSchema>;
 
@@ -55,6 +56,7 @@ const SignInPage = () => {
         Cookie.set("jwt", result.data?.token, { path: "/", expires: 365 });
         setAuthUser(result.data?.user);
         localStorage.setItem("auth-user", JSON.stringify(result.data?.user));
+        setCallStatus("idle");
         navigate("/");
       } else {
         setError(result.message);
