@@ -17,7 +17,11 @@ const ConversationHeader = ({ user, isActive = undefined }: TProps) => {
         </Link>
 
         <div className="size-10 bg-slate-200 rounded-full relative">
-          <img src={user?.image} alt={user?.username} />
+          <img
+            src={user?.image}
+            alt={user?.username}
+            className="rounded-full"
+          />
           <div className="size-3 grid place-items-center rounded-full bg-white absolute right-0 bottom-0">
             <div
               className={cn("size-2 rounded-full bg-gray-300", {

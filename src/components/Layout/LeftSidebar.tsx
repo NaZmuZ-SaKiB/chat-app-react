@@ -2,13 +2,13 @@ import { LogOut } from "lucide-react";
 import Conversations from "../Shared/Conversations";
 import SearchBox from "../Shared/SearchBox";
 import { useAuthContext } from "@/context/AuthContextProvider";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import SearchResult from "../Shared/SearchResult";
 import Cookies from "js-cookie";
 
 const LeftSidebar = () => {
-  const { setAuthUser } = useAuthContext();
+  const { authUser, setAuthUser } = useAuthContext();
 
   const [search, setSearch] = useState("");
 
@@ -25,10 +25,22 @@ const LeftSidebar = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Chats</h1>
 
-        <LogOut
-          className="size-8 rounded-full cursor-pointer hover:bg-slate-100 p-1.5 rotate-180"
-          onClick={handleLogout}
-        />
+        <div className="flex gap-3">
+          <Link
+            to={"/my-profile"}
+            className="size-10 bg-slate-100 rounded-full border-2 border-sky-300 hover:border-sky-500"
+          >
+            <img
+              src={authUser?.image}
+              alt={authUser?.username}
+              className="rounded-full"
+            />
+          </Link>
+
+          <div className="size-10 rounded-full grid place-items-center cursor-pointer bg-slate-100 hover:bg-slate-200">
+            <LogOut className="size-5 rotate-180" onClick={handleLogout} />
+          </div>
+        </div>
       </div>
 
       <SearchBox search={search} setSearch={setSearch} />

@@ -8,6 +8,7 @@ import StartConversationPage from "@/pages/StartConversation/StartConversationPa
 import CallSendingPage from "@/pages/Calls/CallSendingPage";
 import CallReceivingPage from "@/pages/Calls/CallReceivingPage";
 import AudioCallPage from "@/pages/Calls/AudioCallPage";
+import MyProfilePage from "@/pages/MyProfile/MyProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "/start-conversation/:id",
         element: <StartConversationPage />,
+      },
+      {
+        path: "/my-profile",
+        element: <MyProfilePage />,
       },
     ],
   },

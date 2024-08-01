@@ -12,3 +12,9 @@ export const useSignInMutation = () =>
     mutationFn: async (data: any) =>
       (await axiosClient.post("/auth/sign-in", data)) as TResponse,
   });
+
+export const useChangePasswordMutation = () =>
+  useMutation({
+    mutationFn: async (data: any) =>
+      (await axiosClient.patch("/auth/change-password", data)) as TResponse,
+  });

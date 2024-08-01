@@ -80,6 +80,7 @@ const Conversations = () => {
                 <img
                   src={item?.users?.[0]?.image}
                   alt={item?.users?.[0]?.username}
+                  className="rounded-full"
                 />
                 <div className="size-5 grid place-items-center rounded-full bg-white absolute right-0 bottom-0">
                   <div
