@@ -83,7 +83,6 @@ const VideoCallPage = () => {
             video: {
               facingMode: "user",
               frameRate: { ideal: 20, max: 30 },
-              aspectRatio: 0.5625,
             },
           });
 
@@ -140,7 +139,6 @@ const VideoCallPage = () => {
             video: {
               facingMode: "user",
               frameRate: { ideal: 20, max: 30 },
-              aspectRatio: 0.5625,
             },
           });
 
