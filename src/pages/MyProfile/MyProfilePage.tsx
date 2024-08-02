@@ -13,7 +13,11 @@ const MyProfilePage = () => {
         <ChevronLeft className="size-8" />
       </Link>
       <div className="size-60 p-1 bg-slate-100 rounded-full overflow-hidden border-2 border-sky-500">
-        <img src={authUser?.image} alt={authUser?.username} />
+        <img
+          src={authUser?.image}
+          alt={authUser?.username}
+          className="rounded-full"
+        />
       </div>
 
       <div className="text-center">

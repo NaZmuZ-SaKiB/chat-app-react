@@ -14,11 +14,11 @@ const getFormattedDate = (date: Date): string => {
     // Case 3: Week name + time in 12 hr format if the date is before yesterday but within this week
     return `${inputDate.format("ddd")} ${inputDate.format("h:mm A")}`;
   } else if (inputDate.isSame(now.startOf("year"), "year")) {
-    // Case 4: Month + Day + time in 12 hr format if the date is before this week but within this year
-    return `${inputDate.format("MMM D")} ${inputDate.format("h:mm A")}`;
+    // Case 4: Month + Day if the date is before this week but within this year
+    return `${inputDate.format("MMM D")}`;
   } else {
-    // Case 5: Year + Month + Day + time in 12 hr format if the date is before this year
-    return `${inputDate.format("YYYY MMM D")} ${inputDate.format("h:mm A")}`;
+    // Case 5: Year + Month if the date is before this year
+    return `${inputDate.format("YYYY MMM")}`;
   }
 };
 

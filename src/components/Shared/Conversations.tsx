@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import NotificationSound from "@/assets/audio/notification.mp3";
 import ConversationsLoader from "../Loaders/ConversationsLoader";
+import getFormattedDate from "@/utils/getFormattedDate";
 
 const Conversations = () => {
   const { id } = useParams();
@@ -98,16 +99,24 @@ const Conversations = () => {
                 >
                   {item?.users?.[0].name}
                 </h3>
-                <p
-                  className={cn("truncate text-sm text-slate-500", {
-                    "text-slate-900 font-semibold": !seen,
-                  })}
+                <div
+                  className={cn(
+                    "flex justify-between items-end gap-1 text-sm text-slate-500",
+                    {
+                      "text-slate-900 font-semibold": !seen,
+                    }
+                  )}
                 >
-                  {!sentByMe
-                    ? item?.users?.[0]?.name?.split(" ")[0] + ": "
-                    : "You: "}
-                  {item?.lastMessage?.message}
-                </p>
+                  <p className="truncate">
+                    {!sentByMe
+                      ? item?.users?.[0]?.name?.split(" ")[0] + ": "
+                      : "You: "}
+                    {item?.lastMessage?.message}
+                  </p>
+                  <span className="text-nowrap text-xs">
+                    {getFormattedDate(item?.lastMessage?.createdAt)}
+                  </span>
+                </div>
               </div>
             </Link>
           );

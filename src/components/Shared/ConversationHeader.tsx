@@ -11,7 +11,7 @@ type TProps = {
 
 const ConversationHeader = ({ user, isActive = undefined }: TProps) => {
   return (
-    <div className="px-4 py-2 bg-blue-100 flex justify-between items-center">
+    <div className="px-4 py-2 bg-sky-100 flex justify-between items-center">
       <div className="flex gap-2 items-center">
         <Link to={"/"} className="px-1.5 cursor-pointer">
           <ChevronLeft className="size-8" />

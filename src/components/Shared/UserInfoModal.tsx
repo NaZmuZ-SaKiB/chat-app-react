@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ChevronLeft, Info } from "lucide-react";
+import { Info, X } from "lucide-react";
 import { useState } from "react";
 
 const UserInfoModal = ({ user }: { user: any }) => {
@@ -33,10 +33,14 @@ const UserInfoModal = ({ user }: { user: any }) => {
             className="px-1.5 cursor-pointer self-start"
             onClick={handleClose}
           >
-            <ChevronLeft className="size-8" />
+            <X className="size-8" />
           </div>
           <div className="size-60 p-1 bg-slate-100 rounded-full overflow-hidden border-2 border-sky-500">
-            <img src={user?.image} alt={user?.username} />
+            <img
+              src={user?.image}
+              alt={user?.username}
+              className="rounded-full"
+            />
           </div>
 
           <div className="text-center flex flex-col gap-3">
