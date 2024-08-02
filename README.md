@@ -4,6 +4,16 @@ This is the frontend of the real-time chat app built with Vite, ReactJs and Type
 
 ### [Live Site Link](https://chat-app-react-gray.vercel.app)
 
+### Credentials
+
+`User1:`
+`email:` steve@gmail.com
+`password:` 11111111
+
+`User2:`
+`email:` tamim@gmail.com
+`password:` 11111111
+
 ## Technology
 
 - Vite
