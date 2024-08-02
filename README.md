@@ -1,30 +1,54 @@
-# React + TypeScript + Vite
+# Chat App React Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend of the real-time chat app built with Vite, ReactJs and Typescript. Users can chat, audio-call and video-call with each other see realtime update with optimistic update. Socket.io is used for real-time features and PeerJs for audio and video calls.
 
-Currently, two official plugins are available:
+### [Live Site Link](https://chat-app-react-gray.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technology
 
-## Expanding the ESLint configuration
+- Vite
+- ReacJs
+- React Router Dom
+- Reac Hook Form
+- Tanstack Query
+- Tailwind CSS
+- Shadcn UI
+- Axios
+- Socket.io-client
+- PeerJs
+- Zod
+- Typescript
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Run the project in your local mechine
 
-- Configure the top-level `parserOptions` property like this:
+### Requirements
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+- Node Js (Make sure you have node js installed on your mechine).
+- MongoDB Compass (optional: if you want to use mongodb localy).
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Installation
+
+1. Clone this repo:
+   - `git clone https://github.com/NaZmuZ-SaKiB/chat-app-react.git`
+2. Install all necessary dependencies:
+   - `cd chat-app-react`
+   - `npm install` or `yarn`
+3. Create a `.env` file in current directory and add following properties:
+
+   - `VITE_BASE_API_URL` = api url
+
+4. Run the development server using following command:
+   - `npm run dev` or `yarn dev`
+5. To build the project run following command:
+   - `npm run build` or `yarn build`
+6. To run the build version of the project run following command:
+
+   - `npm run start` or `yarn start`
+
+### Deployment
+
+1. Build the project and push to github.
+2. Go to vercel and create an account or login
+3. Create new project and select the github repository
+4. Add necessary environment variables
+5. Wait for the build to complete
