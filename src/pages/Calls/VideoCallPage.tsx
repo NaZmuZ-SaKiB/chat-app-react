@@ -223,19 +223,16 @@ const VideoCallPage = () => {
         <video
           ref={bigVideoRef}
           playsInline
-          className="absolute left-0 top-0 w-full h-full z-10 object-contain"
+          className="absolute left-0 top-0 w-full h-full z-10"
         />
 
         <video
           ref={smallVideoRef}
           playsInline
           muted
-          className={cn(
-            "absolute right-2 top-2 w-[100px] aspect-[9/16] object-contain z-20",
-            {
-              hidden: status !== "connected",
-            }
-          )}
+          className={cn("absolute right-2 top-2 w-[100px] aspect-[9/16] z-20", {
+            hidden: status !== "connected",
+          })}
         />
 
         {status !== "connected" && (
