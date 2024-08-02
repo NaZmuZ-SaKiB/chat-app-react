@@ -62,6 +62,26 @@ const AudioCallPage = () => {
 
   // Answer Call
   useEffect(() => {
+    const handleTabClose = () => {
+      setCallStatus("idle");
+
+      peer?.off("call");
+      peer?.removeAllListeners();
+      peer?.destroy();
+
+      setPeer(null);
+
+      mediaStream?.getTracks().forEach((track) => {
+        track.stop();
+      });
+
+      setMediaStream(null);
+      socket?.emit("end-call", { to: otherUserId });
+      setStatus("disconnected");
+    };
+
+    window.addEventListener("beforeunload", handleTabClose);
+
     if (role === "receiver") {
       peer?.on("call", async (call) => {
         try {
@@ -91,7 +111,6 @@ const AudioCallPage = () => {
           mediaStream?.getTracks().forEach((track) => {
             track.stop();
           });
-          setCallStatus("idle");
           setMediaStream(null);
           setStatus("disconnected");
         }
@@ -103,9 +122,12 @@ const AudioCallPage = () => {
           track.stop();
         });
         setMediaStream(null);
-        setCallStatus("idle");
       };
     }
+
+    return () => {
+      window.removeEventListener("beforeunload", handleTabClose);
+    };
   }, [peer]);
 
   // Send Call
@@ -141,7 +163,6 @@ const AudioCallPage = () => {
           });
           setMediaStream(null);
           setStatus("disconnected");
-          setCallStatus("idle");
         }
       };
 
@@ -153,7 +174,6 @@ const AudioCallPage = () => {
           track.stop();
         });
         setMediaStream(null);
-        setCallStatus("idle");
       };
     }
   }, [id, peer, role]);
@@ -161,7 +181,6 @@ const AudioCallPage = () => {
   // Socket Listener
   useEffect(() => {
     const handleEndCall = () => {
-      setCallStatus("idle");
       peer?.off("call");
       peer?.removeAllListeners();
       peer?.destroy();
@@ -185,7 +204,6 @@ const AudioCallPage = () => {
         track.stop();
       });
       setMediaStream(null);
-      setCallStatus("idle");
     };
   }, [socket, peer]);
 
@@ -205,7 +223,6 @@ const AudioCallPage = () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
-      setCallStatus("idle");
     };
   }, [status, callStartTime]);
 

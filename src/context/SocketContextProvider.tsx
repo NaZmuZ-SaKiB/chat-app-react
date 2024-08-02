@@ -7,6 +7,7 @@ import {
 } from "react";
 import io, { Socket } from "socket.io-client";
 import { useAuthContext } from "./AuthContextProvider";
+import { getCallStatus } from "@/utils/localstorage";
 
 type TContext = {
   socket: Socket | null;
@@ -24,7 +25,6 @@ export const useSocketContext = () => useContext(SocketContext);
 const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  console.log("online", onlineUsers);
 
   const { authUser } = useAuthContext();
 
@@ -69,7 +69,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser]);
+  }, [authUser, getCallStatus()]);
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>
       {children}
