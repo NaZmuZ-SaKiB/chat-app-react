@@ -87,6 +87,7 @@ const VideoCallPage = () => {
           });
 
           bigVideoRef.current!.srcObject = getUserMedia;
+          bigVideoRef.current!.muted = true;
           bigVideoRef.current!.play().catch(() => {});
 
           setMediaStream(getUserMedia);
@@ -96,6 +97,7 @@ const VideoCallPage = () => {
           call?.on("stream", (remoteStream) => {
             if (bigVideoRef?.current) {
               bigVideoRef.current.srcObject = remoteStream;
+              bigVideoRef.current!.muted = false;
               bigVideoRef.current.play().catch(() => {});
 
               smallVideoRef.current!.srcObject = getUserMedia;
@@ -143,6 +145,7 @@ const VideoCallPage = () => {
           });
 
           bigVideoRef.current!.srcObject = getUserMedia;
+          bigVideoRef.current!.muted = true;
           bigVideoRef.current!.play().catch(() => {});
 
           setMediaStream(getUserMedia);
@@ -153,6 +156,7 @@ const VideoCallPage = () => {
           call?.on("stream", (remoteStream) => {
             if (bigVideoRef?.current) {
               bigVideoRef.current.srcObject = remoteStream;
+              bigVideoRef.current!.muted = false;
               bigVideoRef.current.play().catch(() => {});
 
               smallVideoRef.current!.srcObject = getUserMedia;
@@ -221,16 +225,19 @@ const VideoCallPage = () => {
         <video
           ref={bigVideoRef}
           playsInline
-          className="absolute left-0 top-0 w-full h-full z-10"
+          className="absolute left-0 top-0 w-full h-full z-10 object-cover"
         />
 
         <video
           ref={smallVideoRef}
           playsInline
           muted
-          className={cn("absolute right-2 top-2 w-[100px] aspect-[9/16] z-20", {
-            hidden: status !== "connected",
-          })}
+          className={cn(
+            "absolute right-2 top-2 w-[100px] aspect-[9/16] z-20 object-cover",
+            {
+              hidden: status !== "connected",
+            }
+          )}
         />
 
         {status !== "connected" && (
