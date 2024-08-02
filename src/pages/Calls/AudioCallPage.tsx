@@ -241,7 +241,11 @@ const AudioCallPage = () => {
         <h2 className="font-medium text-lg text-slate-500 mb-5">Audio Call</h2>
 
         <div className="size-40 bg-slate-200 rounded-full relative mb-3">
-          <img src={otherUser?.image} alt={otherUser?.username} />
+          <img
+            src={otherUser?.image}
+            alt={otherUser?.username}
+            className="rounded-full"
+          />
         </div>
 
         <h1 className="font-semibold text-2xl text-slate-700 mb-2">
