@@ -14,6 +14,13 @@ const HomePage = () => {
           <div className="text-gray-500 text-lg">
             <p>Search Your Friends</p>
             <p>Start Chatting</p>
+            <br />
+            <p className="text-sm">
+              Sometimes call may not work because it is hosted in free server
+            </p>
+            <p className="text-sm">
+              Try refreshing the page or logout and login again
+            </p>
           </div>
         </div>
       </div>
