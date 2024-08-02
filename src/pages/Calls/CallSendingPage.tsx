@@ -68,6 +68,8 @@ const CallSendingPage = () => {
       socket?.on(
         "accept-call",
         (data: { senderId: string; receiverId: string; type: string }) => {
+          console.log("accepted-call");
+
           const newPeer = new Peer(authUser?._id?.toString());
 
           newPeer.on("open", (peerId) => {
