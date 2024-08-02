@@ -8,7 +8,7 @@ const MyProfilePage = () => {
   const { authUser } = useAuthContext();
 
   return (
-    <div className="flex-1 flex flex-col items-center gap-5 px-3 pb-10 pt-5">
+    <div className="bg-slate-100 flex-1 flex flex-col items-center gap-5 px-3 pb-10 pt-5">
       <Link to={"/"} className="px-1.5 cursor-pointer self-start">
         <ChevronLeft className="size-8" />
       </Link>

@@ -3,7 +3,7 @@ import LeftSidebar from "@/components/Layout/LeftSidebar";
 const HomePage = () => {
   return (
     <>
-      <div className="flex-1 h-svh grid place-items-center max-md:hidden">
+      <div className="bg-slate-100 flex-1 h-svh grid place-items-center max-md:hidden">
         <div className="text-center">
           <h2 className="font-semibold text-xl text-gray-700 uppercase">
             Welcome To the

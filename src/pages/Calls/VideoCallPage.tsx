@@ -219,18 +219,19 @@ const VideoCallPage = () => {
 
   return (
     <div className="w-full h-svh grid place-items-center">
-      <div className="h-svh aspect-[9/16] relative">
+      <div className="h-svh bg-white aspect-[9/16] relative">
         <video
           ref={bigVideoRef}
           playsInline
-          className="absolute left-0 top-0 w-full h-full object-cover z-10"
+          className="absolute left-0 top-0 w-full h-full z-10 object-contain"
         />
 
         <video
           ref={smallVideoRef}
           playsInline
+          muted
           className={cn(
-            "absolute right-2 top-2 w-[100px] aspect-[9/16] object-cover z-20",
+            "absolute right-2 top-2 w-[100px] aspect-[9/16] object-contain z-20",
             {
               hidden: status !== "connected",
             }
@@ -240,7 +241,7 @@ const VideoCallPage = () => {
         {status !== "connected" && (
           <div className="bg-black/50 absolute h-full w-full top-0 left-0 z-30 flex flex-col items-center justify-center">
             <p
-              className={cn("capitalize text-slate-500", {
+              className={cn("capitalize text-white", {
                 "text-red-500": status === "disconnected",
               })}
             >
