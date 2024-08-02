@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import AudioCall from "./AudioCall";
+import AudioCallButton from "./AudioCallButton";
 import UserInfoModal from "./UserInfoModal";
+import VideoCallButton from "./VideoCallButton";
 
 type TProps = {
   user: any;
@@ -45,7 +46,15 @@ const ConversationHeader = ({ user, isActive = undefined }: TProps) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <AudioCall otherUserId={`${user?._id}`} isActive={isActive || false} />
+        <AudioCallButton
+          otherUserId={`${user?._id}`}
+          isActive={isActive || false}
+        />
+
+        <VideoCallButton
+          otherUserId={`${user?._id}`}
+          isActive={isActive || false}
+        />
 
         <UserInfoModal user={user} />
       </div>

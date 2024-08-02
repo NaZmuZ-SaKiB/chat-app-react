@@ -109,7 +109,11 @@ const CallSendingPage = () => {
         </h2>
 
         <div className="size-40 bg-slate-200 rounded-full relative mb-3">
-          <img src={user?.image} alt={user?.username} />
+          <img
+            src={user?.image}
+            alt={user?.username}
+            className="rounded-full"
+          />
         </div>
 
         <h1 className="font-semibold text-2xl text-slate-700 mb-2">

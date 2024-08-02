@@ -2,14 +2,14 @@ import { useAuthContext } from "@/context/AuthContextProvider";
 import { useSocketContext } from "@/context/SocketContextProvider";
 import { cn } from "@/lib/utils";
 import { getCallStatus, setCallStatus } from "@/utils/localstorage";
-import { Phone } from "lucide-react";
+import { Video } from "lucide-react";
 
 type TProps = {
   otherUserId: string;
   isActive: boolean;
 };
 
-const AudioCall = ({ otherUserId, isActive }: TProps) => {
+const VideoCallButton = ({ otherUserId, isActive }: TProps) => {
   const { socket } = useSocketContext();
   const { authUser } = useAuthContext();
 
@@ -22,13 +22,13 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
       socket.emit("call", {
         receiverId: otherUserId,
         senderId: authUser?._id.toString(),
-        type: "audio",
+        type: "video",
       });
 
       setCallStatus("in-call");
 
       window.open(
-        `${window.origin}/call-sending/${otherUserId}?type=audio`,
+        `${window.origin}/call-sending/${otherUserId}?type=video`,
         "_blank"
       );
     }
@@ -41,9 +41,9 @@ const AudioCall = ({ otherUserId, isActive }: TProps) => {
         "opacity-20": !isActive,
       })}
     >
-      <Phone className="size-6" fill="black" strokeWidth={0} />
+      <Video className="size-8" fill="#0284c7" strokeWidth={0} />
     </div>
   );
 };
 
-export default AudioCall;
+export default VideoCallButton;

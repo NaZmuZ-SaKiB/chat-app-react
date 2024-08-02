@@ -5,7 +5,7 @@ import { useSocketContext } from "@/context/SocketContextProvider";
 import { useGetUserByIdQuery } from "@/lib/queries/user.query";
 import { cn } from "@/lib/utils";
 import { setCallStatus } from "@/utils/localstorage";
-import { Phone, X } from "lucide-react";
+import { Phone, Video, X } from "lucide-react";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -107,7 +107,11 @@ const CallReceivingPage = () => {
         <audio ref={audioRef} autoPlay loop src={Ringtone} playsInline={true} />
 
         <div className="size-40 bg-slate-200 rounded-full relative mb-3">
-          <img src={user?.image} alt={user?.username} />
+          <img
+            src={user?.image}
+            alt={user?.username}
+            className="rounded-full"
+          />
         </div>
 
         <h1 className="font-semibold text-2xl text-slate-700 mb-2">
@@ -128,14 +132,25 @@ const CallReceivingPage = () => {
             className="size-12 flex justify-center items-center rounded-full bg-green-500 cursor-pointer"
             onClick={acceptCall}
           >
-            <Phone
-              fill="white"
-              strokeWidth={0}
-              className={cn("size-7 text-white", {
-                "opacity-50 cursor-not-allowed pointer-events-none":
-                  status === "connecting",
-              })}
-            />
+            {callType === "audio" ? (
+              <Phone
+                fill="white"
+                strokeWidth={0}
+                className={cn("size-7 text-white", {
+                  "opacity-50 cursor-not-allowed pointer-events-none":
+                    status === "connecting",
+                })}
+              />
+            ) : (
+              <Video
+                fill="white"
+                strokeWidth={0}
+                className={cn("size-7 text-white", {
+                  "opacity-50 cursor-not-allowed pointer-events-none":
+                    status === "connecting",
+                })}
+              />
+            )}
           </div>
         </div>
       </div>
